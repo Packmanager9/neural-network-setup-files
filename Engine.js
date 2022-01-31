@@ -1272,75 +1272,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
     }
 
 
-    class Agent {
-        constructor(){
-            this.network = new Network([0,0,0,0], [4,4,2])
-            this.body = new Circle(350, 350, 3, getRandomColor())
-            this.point = new Point(350,350)
-            this.line = new LineOP(this.point, this.body, this.body.color, 1)
-            this.loss = 0
-        }
-        draw(){
-            let inputs = []
-            inputs[0] = (target.x-this.body.x)/350
-            inputs[1] = (target.y-this.body.y)/350
-            inputs[2] = 0
-            inputs[3] = 0
-            this.network.compute(inputs)
-            this.body.draw()
-            this.point.x = this.body.x + (this.network.outputs[0] * 100)
-            this.point.y = this.body.y + (this.network.outputs[1] * 100)
-
-            let link = new LineOP(this.body, target)
-            this.loss += link.hypotenuse()
-            this.line.draw()
-        }
-    }
-
-    let agents = []
-    for(let t = 0;t<50;t++){
-        let agent = new Agent()
-        agents.push(agent)
-    }
-
-    let target = new Circle(500, 350, 5, "red")
-    let angle = 0
-    let dis = 150
-    let generationTimer = Math.PI*2
-    let spin = .005
-
     function main() {
-        generationTimer-= spin
         canvas_context.clearRect(0, 0, canvas.width, canvas.height)  // refreshes the image
         gamepadAPI.update() //checks for button presses/stick movement on the connected controller)
-        // game code goes here
-        angle +=spin
-        target.x = 350 + (Math.cos(angle)*dis)
-        target.y = 350 + (Math.sin(angle)*dis)
-        target.draw()
-
-        for(let t = 0;t<agents.length;t++){
-            agents[t].draw()
-        }
-        if(generationTimer <= 0){
-            let min = 999999999
-            let sto = []
-            for(let t = 0;t<agents.length;t++){
-                let hyp = agents[t].loss
-                if(hyp < min){
-                    min = hyp
-                    sto[0] = agents[t]
-                }
-            }
-            agents = []
-            for(let t = 0;t<20;t++){
-                let agent = new Agent()
-                agent.network = sto[0].network.clone(sto[0].network)
-                agents.push(agent)
-            }
-            for(let t = 1;t<agents.length;t++){
-                agents[t].network.mutate()
-            }
-        }
+   
     }
 })
